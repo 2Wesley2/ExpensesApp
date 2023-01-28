@@ -1,8 +1,8 @@
-import 'package:expenses/components/adaptative/adaptative_date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'adaptative/adaptative_button.dart';
 import 'adaptative/adaptative_text_field.dart';
+import 'adaptative/adaptative_date_picker.dart';
 
 class TransactionForm extends StatefulWidget {
   final void Function(String, double, DateTime) onSubmit;
@@ -63,7 +63,9 @@ class _TransactionFormState extends State<TransactionForm> {
                       child: Text(
                         _selectedDate == null
                             ? 'Nenhuma data selecionada!'
-                            : 'Data Selecionada: ${DateFormat('dd/MM/y').format(_selectedDate!)}',
+                            : 'Data Selecionada: ${DateFormat('dd/MM/y').format(
+                                _selectedDate!,
+                              )}',
                       ),
                     ),
                   ],
