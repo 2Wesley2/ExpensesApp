@@ -1,8 +1,9 @@
-import 'package:expenses/components/transaction_form.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:io';
+
+import 'package:expenses/components/transaction_form.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'components/transaction_list.dart';
 import 'components/chart.dart';
 import 'models/transaction.dart';
@@ -56,7 +57,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
   bool _showChart = false;
-  final platformIsIOS = Platform.isIOS;
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getIconButton(IconData icon, Function() fn) {
-    return platformIsIOS
+    return Platform.isIOS
         ? GestureDetector(onTap: fn, child: Icon(icon))
         : IconButton(icon: Icon(icon), onPressed: fn);
   }
@@ -107,13 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     bool isLandscape = mediaQuery.orientation == Orientation.landscape;
 
-    final iconList = platformIsIOS ? CupertinoIcons.refresh : Icons.show_chart;
-    final iconChart = platformIsIOS ? CupertinoIcons.refresh : Icons.list;
+    final iconList = Platform.isIOS ? CupertinoIcons.refresh : Icons.list;
+    final chartList =
+        Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
 
-    final actions = <Widget>[
+    final actions = [
       if (isLandscape)
         _getIconButton(
-          _showChart ? iconChart : iconList,
+          _showChart ? iconList : chartList,
           () {
             setState(() {
               _showChart = !_showChart;
@@ -121,12 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       _getIconButton(
-        platformIsIOS ? CupertinoIcons.add : Icons.add,
+        Platform.isIOS ? CupertinoIcons.add : Icons.add,
         () => _openTransactionFormModal(context),
       ),
     ];
 
-    final appBar = AppBar(
+    final PreferredSizeWidget appBar = AppBar(
       title: const Text('Despesas Pessoais'),
       actions: actions,
     );
@@ -136,25 +137,42 @@ class _MyHomePageState extends State<MyHomePage> {
         mediaQuery.padding.top;
 
     final bodyPage = SafeArea(
-        child: SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (_showChart || !isLandscape)
-            SizedBox(
-              height: availableHeight * (isLandscape ? 0.8 : 0.3),
-              child: Chart(_recentTransactions),
-            ),
-          if (!_showChart || !isLandscape)
-            SizedBox(
-              height: availableHeight * (isLandscape ? 1 : 0.7),
-              child: TransactionList(_transactions, _removeTransaction),
-            ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // if (isLandscape)
+            //   Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       const Text('Exibir Gráfico'),
+            //       Switch.adaptive(
+            //         activeColor: Theme.of(context).colorScheme.secondary,
+            //         value: _showChart,
+            //         onChanged: (value) {
+            //           setState(() {
+            //             _showChart = value;
+            //           });
+            //         },
+            //       ),
+            //     ],
+            //   ),
+            if (_showChart || !isLandscape)
+              SizedBox(
+                height: availableHeight * (isLandscape ? 0.8 : 0.3),
+                child: Chart(_recentTransactions),
+              ),
+            if (!_showChart || !isLandscape)
+              SizedBox(
+                height: availableHeight * (isLandscape ? 1 : 0.7),
+                child: TransactionList(_transactions, _removeTransaction),
+              ),
+          ],
+        ),
       ),
-    ));
+    );
 
-    return platformIsIOS
+    return Platform.isIOS
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: const Text('Despesas Pessoais'),
@@ -168,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
         : Scaffold(
             appBar: appBar,
             body: bodyPage,
-            floatingActionButton: platformIsIOS
+            floatingActionButton: Platform.isIOS
                 ? Container()
                 : FloatingActionButton(
                     child: const Icon(Icons.add),

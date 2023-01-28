@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'adaptative/adaptative_button.dart';
 import 'adaptative/adaptative_text_field.dart';
 import 'adaptative/adaptative_date_picker.dart';
@@ -55,22 +54,6 @@ class _TransactionFormState extends State<TransactionForm> {
                     const TextInputType.numberWithOptions(decimal: true),
                 onSubmitted: (_) => _submitForm,
               ),
-              SizedBox(
-                height: 70,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        _selectedDate == null
-                            ? 'Nenhuma data selecionada!'
-                            : 'Data Selecionada: ${DateFormat('dd/MM/y').format(
-                                _selectedDate!,
-                              )}',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               AdaptativeDatePicker(
                 selectedDate: _selectedDate,
                 onDateChanged: (newDate) {
@@ -85,7 +68,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   AdaptativeButton(
                     'Nova Transação',
                     _submitForm,
-                  )
+                  ),
                 ],
               ),
             ],
