@@ -56,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
   bool _showChart = false;
+  final platformIsIOS = Platform.isIOS;
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -96,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getIconButton(IconData icon, Function() fn) {
-    return Platform.isIOS
+    return platformIsIOS
         ? GestureDetector(onTap: fn, child: Icon(icon))
         : IconButton(icon: Icon(icon), onPressed: fn);
   }
@@ -106,10 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     bool isLandscape = mediaQuery.orientation == Orientation.landscape;
 
+    final iconList = platformIsIOS ? CupertinoIcons.refresh : Icons.show_chart;
+    final iconChart = platformIsIOS ? CupertinoIcons.refresh : Icons.list;
+
     final actions = <Widget>[
       if (isLandscape)
         _getIconButton(
-          _showChart ? Icons.show_chart : Icons.list,
+          _showChart ? iconChart : iconList,
           () {
             setState(() {
               _showChart = !_showChart;
@@ -117,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       _getIconButton(
-        Platform.isIOS ? CupertinoIcons.add : Icons.add,
+        platformIsIOS ? CupertinoIcons.add : Icons.add,
         () => _openTransactionFormModal(context),
       ),
     ];
@@ -131,7 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar.preferredSize.height -
         mediaQuery.padding.top;
 
-    final bodyPage = SingleChildScrollView(
+    final bodyPage = SafeArea(
+        child: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -147,8 +152,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
         ],
       ),
-    );
-    return Platform.isIOS
+    ));
+
+    return platformIsIOS
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: const Text('Despesas Pessoais'),
@@ -162,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
         : Scaffold(
             appBar: appBar,
             body: bodyPage,
-            floatingActionButton: Platform.isIOS
+            floatingActionButton: platformIsIOS
                 ? Container()
                 : FloatingActionButton(
                     child: const Icon(Icons.add),
