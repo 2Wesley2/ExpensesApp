@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import '../models/transaction.dart';
 import 'package:intl/intl.dart';
 
-class TransactionItem extends StatelessWidget {
+class TransactionItem extends StatefulWidget {
   const TransactionItem({
     Key? key,
     required this.tr,
@@ -11,6 +12,29 @@ class TransactionItem extends StatelessWidget {
 
   final Transaction tr;
   final void Function(String p1) onRemove;
+
+  @override
+  State<TransactionItem> createState() => _TransactionItemState();
+}
+
+class _TransactionItemState extends State<TransactionItem> {
+  static const colors = [
+    Colors.red,
+    Colors.purple,
+    Colors.orange,
+    Colors.blue,
+    Colors.black,
+  ];
+
+  Color? backgroundColor;
+
+  @override
+  void initState() {
+    super.initState();
+
+    int i = Random().nextInt(5);
+    backgroundColor = colors[i];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +52,7 @@ class TransactionItem extends StatelessWidget {
               padding: const EdgeInsets.all(6),
               child: FittedBox(
                 child: Text(
-                  'R\$${tr.value}',
+                  'R\$${widget.tr.value}',
                   style: const TextStyle(
                     color: Colors.white,
                   ),
@@ -37,15 +61,15 @@ class TransactionItem extends StatelessWidget {
             ),
           ),
           title: Text(
-            tr.title,
+            widget.tr.title,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           subtitle: Text(
-            DateFormat('d MMM y').format(tr.date),
+            DateFormat('d MMM y').format(widget.tr.date),
           ),
           trailing: MediaQuery.of(context).size.width > 480
               ? TextButton.icon(
-                  onPressed: () => onRemove(tr.id),
+                  onPressed: () => widget.onRemove(widget.tr.id),
                   icon: Icon(Icons.delete,
                       color: Theme.of(context).colorScheme.error),
                   label: Text(
@@ -57,7 +81,7 @@ class TransactionItem extends StatelessWidget {
               : IconButton(
                   icon: const Icon(Icons.delete),
                   color: Theme.of(context).colorScheme.error,
-                  onPressed: () => onRemove(tr.id),
+                  onPressed: () => widget.onRemove(widget.tr.id),
                 )),
     );
   }
