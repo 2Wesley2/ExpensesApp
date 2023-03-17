@@ -43,6 +43,7 @@ class ExpensesApp extends StatelessWidget {
           ),
         ),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
